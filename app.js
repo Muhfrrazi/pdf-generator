@@ -33,6 +33,7 @@ const state = {
   previewHeight: 0,
   ratiosReady: false,
   tool: "watermark",
+  view: "home",
   processing: false,
   type: "text",
   text: "CONFIDENTIAL",
@@ -74,6 +75,11 @@ const state = {
 const els = {
   toolStatus: document.getElementById("toolStatus"),
   statusText: document.getElementById("statusText"),
+  homePage: document.getElementById("homePage"),
+  toolPage: document.getElementById("toolPage"),
+  backHome: document.getElementById("backHome"),
+  toolTitle: document.getElementById("toolTitle"),
+  toolSubtitle: document.getElementById("toolSubtitle"),
   sourcePdfSection: document.getElementById("sourcePdfSection"),
   pdfInput: document.getElementById("pdfInput"),
   imageInput: document.getElementById("imageInput"),
@@ -142,8 +148,8 @@ const els = {
   imageControls: document.getElementById("imageControls"),
 };
 
-const segButtons = Array.from(document.querySelectorAll(".seg-btn"));
-const toolButtons = Array.from(document.querySelectorAll(".tool-btn"));
+const segButtons = Array.from(document.querySelectorAll(".seg-btn[data-type]"));
+const toolButtons = Array.from(document.querySelectorAll(".tool-card[data-tool]"));
 
 const renderState = { busy: false };
 let dragState = null;
@@ -173,6 +179,7 @@ function hexToRgb(hex) {
   const b = bigint & 255;
   return { r: r / 255, g: g / 255, b: b / 255 };
 }
+
 
 function setEmptyState(show) {
   els.emptyState.classList.toggle("hidden", !show);
@@ -237,9 +244,60 @@ function updateToolButtons(tool) {
   });
 }
 
+const toolMeta = {
+  watermark: {
+    title: "Watermark",
+    subtitle: "Tempelkan teks atau logo di atas PDF dengan kontrol penuh.",
+  },
+  merge: {
+    title: "Merge PDF",
+    subtitle: "Gabungkan beberapa PDF sesuai urutan yang Anda inginkan.",
+  },
+  compress: {
+    title: "Compress PDF",
+    subtitle: "Perkecil ukuran file sambil menjaga kualitas sebaik mungkin.",
+  },
+  split: {
+    title: "Split PDF",
+    subtitle: "Pisahkan halaman tertentu menjadi file terpisah.",
+  },
+  jpg: {
+    title: "PDF to JPG",
+    subtitle: "Konversi halaman PDF ke JPG secara cepat.",
+  },
+};
+
+function updateToolHeader(tool) {
+  const meta = toolMeta[tool] || toolMeta.watermark;
+  if (els.toolTitle) els.toolTitle.textContent = meta.title;
+  if (els.toolSubtitle) els.toolSubtitle.textContent = meta.subtitle;
+}
+
+function setView(view) {
+  state.view = view;
+  if (els.homePage) {
+    els.homePage.classList.toggle("hidden", view !== "home");
+  }
+  if (els.toolPage) {
+    els.toolPage.classList.toggle("hidden", view !== "tool");
+  }
+  if (view === "home") {
+    setStatus("");
+  }
+}
+
+function openTool(tool) {
+  setTool(tool);
+  setView("tool");
+  if (state.pdfDoc && tool !== "merge") {
+    renderPage();
+  }
+}
+
 function setTool(tool) {
   state.tool = tool;
   updateToolButtons(tool);
+  updateToolHeader(tool);
   els.sourcePdfSection.classList.toggle("hidden", tool === "merge");
   els.watermarkTool.classList.toggle("hidden", tool !== "watermark");
   els.compressTool.classList.toggle("hidden", tool !== "compress");
@@ -439,30 +497,34 @@ function updateModeVisibility() {
 }
 
 function refreshOverlays() {
-  if (!state.pdfBytes || state.tool !== "watermark") {
+  if (state.tool !== "watermark") {
     hideOverlay();
     hidePattern();
-    return;
-  }
-  updateModeVisibility();
-
-  if (state.type === "text") {
-    els.wmTextOverlay.classList.remove("hidden");
-    els.wmImageOverlay.classList.add("hidden");
-    if (state.mode === "repeat") {
-      drawPattern();
-    } else {
-      updateTextOverlay();
-    }
+  } else if (!state.pdfBytes) {
+    hideOverlay();
+    hidePattern();
   } else {
-    els.wmTextOverlay.classList.add("hidden");
-    els.wmImageOverlay.classList.remove("hidden");
-    if (!state.imageDataUrl) {
-      hideOverlay();
-      return;
+    updateModeVisibility();
+
+    if (state.type === "text") {
+      els.wmTextOverlay.classList.remove("hidden");
+      els.wmImageOverlay.classList.add("hidden");
+      if (state.mode === "repeat") {
+        drawPattern();
+      } else {
+        updateTextOverlay();
+      }
+    } else {
+      els.wmTextOverlay.classList.add("hidden");
+      els.wmImageOverlay.classList.remove("hidden");
+      if (!state.imageDataUrl) {
+        hideOverlay();
+      } else {
+        updateImageOverlay();
+      }
     }
-    updateImageOverlay();
   }
+
 }
 
 function drawPattern() {
@@ -1024,6 +1086,7 @@ els.compressBtn.addEventListener("click", compressPdf);
 els.mergeBtn.addEventListener("click", mergePdfs);
 els.splitBtn.addEventListener("click", splitPdf);
 els.jpgBtn.addEventListener("click", exportJpg);
+els.backHome.addEventListener("click", () => setView("home"));
 
 els.prevPage.addEventListener("click", async () => {
   if (state.currentPage <= 1) return;
@@ -1165,7 +1228,7 @@ segButtons.forEach((btn) => {
 });
 
 toolButtons.forEach((btn) => {
-  btn.addEventListener("click", () => setTool(btn.dataset.tool));
+  btn.addEventListener("click", () => openTool(btn.dataset.tool));
 });
 
 els.watermarkOverlay.addEventListener("pointerdown", (event) => {
@@ -1244,3 +1307,4 @@ updateModeVisibility();
 syncControlsFromState();
 updateEmptyStateText();
 setTool(state.tool);
+setView(state.view);

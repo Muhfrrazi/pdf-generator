@@ -29,31 +29,86 @@
         </div>
       </header>
 
-      <main class="workspace">
-        <section class="panel controls">
-          <div class="section">
-            <span class="label">Pilih Tool</span>
-            <div class="tool-switch" role="group" aria-label="Tool">
-              <button class="tool-btn active" data-tool="watermark" type="button">
-                <span class="tool-title">Watermark</span>
-                <span class="tool-desc">Teks atau logo</span>
-              </button>
-              <button class="tool-btn" data-tool="compress" type="button">
-                <span class="tool-title">Compress</span>
-                <span class="tool-desc">Ringankan ukuran file</span>
-              </button>
-              <button class="tool-btn" data-tool="merge" type="button">
-                <span class="tool-title">Merge</span>
-                <span class="tool-desc">Gabungkan beberapa PDF</span>
-              </button>
-              <button class="tool-btn" data-tool="split" type="button">
-                <span class="tool-title">Split</span>
-                <span class="tool-desc">Pisah per halaman</span>
-              </button>
-              <button class="tool-btn" data-tool="jpg" type="button">
-                <span class="tool-title">PDF to JPG</span>
-                <span class="tool-desc">Export gambar</span>
-              </button>
+      <main class="main">
+        <section id="homePage" class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Toolkit PDF offline</p>
+            <h1>Semua tool PDF yang Anda butuhkan dalam satu tempat.</h1>
+            <p>
+              Fokus kerja lebih cepat dengan alur yang ringan, aman, dan tetap 100%
+              offline.
+            </p>
+            <div class="hero-chips">
+              <span class="chip">Tanpa upload</span>
+              <span class="chip">Cepat & ringan</span>
+              <span class="chip">Kontrol penuh</span>
+              <span class="chip">Gratis dipakai</span>
+            </div>
+          </div>
+          <div class="hero-grid">
+            <button class="tool-card" data-tool="watermark" type="button">
+              <div class="tool-card-icon accent">W</div>
+              <div>
+                <h3>Watermark</h3>
+                <p>
+                  Tempelkan gambar atau teks di atas PDF dalam hitungan detik.
+                  Pilih tipografi, transparansi, dan posisi.
+                </p>
+              </div>
+            </button>
+            <button class="tool-card" data-tool="merge" type="button">
+              <div class="tool-card-icon warm">M</div>
+              <div>
+                <h3>Merge PDF</h3>
+                <p>
+                  Gabungkan PDF sesuai urutan yang Anda inginkan dengan merger
+                  paling mudah.
+                </p>
+              </div>
+            </button>
+            <button class="tool-card" data-tool="compress" type="button">
+              <div class="tool-card-icon cool">C</div>
+              <div>
+                <h3>Compress PDF</h3>
+                <p>
+                  Perkecil ukuran file sambil menjaga kualitas PDF setinggi mungkin.
+                </p>
+              </div>
+            </button>
+            <button class="tool-card" data-tool="split" type="button">
+              <div class="tool-card-icon accent">S</div>
+              <div>
+                <h3>Split PDF</h3>
+                <p>
+                  Pisahkan satu halaman atau satu set untuk konversi menjadi file
+                  PDF terpisah.
+                </p>
+              </div>
+            </button>
+            <button class="tool-card" data-tool="jpg" type="button">
+              <div class="tool-card-icon warm">J</div>
+              <div>
+                <h3>PDF to JPG</h3>
+                <p>
+                  Ubah tiap halaman PDF menjadi JPG atau ekstrak semua gambar di
+                  dalamnya.
+                </p>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <section id="toolPage" class="tool-page hidden">
+          <div class="workspace">
+          <section class="panel controls">
+          <div class="tool-heading">
+            <button id="backHome" class="back-btn" type="button">Kembali</button>
+            <div>
+              <p class="eyebrow">Tool terpilih</p>
+              <h2 id="toolTitle">Watermark</h2>
+              <p id="toolSubtitle" class="note">
+                Tempelkan teks atau logo di atas PDF dengan kontrol penuh.
+              </p>
             </div>
           </div>
 
@@ -320,9 +375,9 @@
               server.
             </p>
           </div>
-        </section>
+          </section>
 
-        <section class="panel preview">
+          <section class="panel preview">
           <div class="preview-head">
             <div>
               <h2>Preview</h2>
@@ -344,6 +399,8 @@
             <div id="emptyState" class="empty">
               <p>Upload PDF untuk mulai.</p>
             </div>
+          </div>
+          </section>
           </div>
         </section>
       </main>
